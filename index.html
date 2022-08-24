@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Tallinja</title>
+  <!-- <meta name="viewport" content="initial-scale=1.0"> -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0">
+
+  <style>
+      body {
+        overflow: hidden; /* Avoid scrolling whole page */
+      }
+
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #description {
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+      }
+
+      #infowindow-content .title {
+        font-weight: bold;
+      }
+
+      #infowindow-content {
+        display: none;
+      }
+
+      #map #infowindow-content {
+        display: inline;
+      }
+
+      .pac-card {
+        position: absolute;
+        z-index: 99;
+        /* display: none; */
+        /* visibility: hidden; */
+        margin: 10px 10px 10px 10px;
+        border-radius: 2px 0 0 2px;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        outline: none;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        background-color: #fff;
+        font-family: Roboto;
+        max-width: 90%;
+        width: 400px;
+      }
+
+      #pac-container {
+        padding-bottom: 10px;
+        /* margin-right: 12px; */
+        margin-top: 10px;
+        margin-left: 12px;
+        margin-right: 16px;
+        /* margin: 12px; */
+      }
+
+      .pac-controls {
+        display: inline-block;
+        padding: 5px 11px;
+      }
+
+      .pac-controls label {
+        font-family: Roboto;
+        font-size: 13px;
+        font-weight: 300;
+      }
+
+      #pac-input {
+        background-color: #fff;
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+        /* margin: 10px; */
+        /* margin-left: 12px; */
+        /* margin-right: 12px; */
+        /* padding: 0 11px 0 13px; */
+        text-overflow: ellipsis;
+        /* width: 400px; */
+        /* max-width: 90%; */
+        
+        /* width: 85%; */
+
+        /* padding-bottom: 12px; */
+
+        height: 100%;
+        width: 100%;
+
+      }
+
+      #pac-input:focus {
+        border-color: #4d90fe;
+      }
+
+      #title {
+        color: #fff;
+        background-color: #4d90fe;
+        font-size: 25px;
+        font-weight: 500;
+        padding: 6px 12px;
+      }
+  </style>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XBJ1RZW84K"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+  
+    gtag('config', 'G-XBJ1RZW84K');
+  </script>
+</head>
+
+<body>
+  <div class="pac-card" id="pac-card">
+    <div id="title">
+      Tallinja
+    </div>
+    <div id="pac-container">
+      <input id="pac-input" type="text" placeholder="Enter a location">
+    </div>
+  </div>
+
+  <div id="map"></div>
+  
+  <div id="infowindow-content">
+    <img src="" width="16" height="16" id="place-icon">
+    <span id="place-name" class="title"></span><br>
+    <span id="place-address"></span>
+  </div>
+
+  <script src="index.js"></script>
+</body>
+
+</html>
