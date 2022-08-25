@@ -47,9 +47,8 @@ function initMap() {
 
     var input = document.getElementById('pac-input');
 
-    var card = document.getElementById('pac-card');
-
-    // map.controls[google.maps.ControlPosition.TOP_RIGHT].push(card);
+    // var card = document.getElementById('pac-card');
+    // map.controls[google.maps.ControlPosition.TOP_LEFT].push(card);
 
     var infowindow = new google.maps.InfoWindow;
 
@@ -58,8 +57,7 @@ function initMap() {
         infowindow.close();
     })
 
-
-    // Searcch autocomplete
+    // Search autocomplete
     var autocomplete = new google.maps.places.Autocomplete(input, {
         bounds: new google.maps.LatLngBounds(
             new google.maps.LatLng(35.685032, 13.902002),
@@ -328,3 +326,5 @@ function readTextFile(file, callback) {
     }
     rawFile.send(null);
 }
+
+window.initMap = initMap;
