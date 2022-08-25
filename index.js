@@ -59,10 +59,11 @@ function initMap() {
 
     // Search autocomplete
     var autocomplete = new google.maps.places.Autocomplete(input, {
-        bounds: new google.maps.LatLngBounds(
-            new google.maps.LatLng(35.685032, 13.902002),
-            new google.maps.LatLng(36.147092, 14.734407)
-        ),
+        // bounds: new google.maps.LatLngBounds(
+        //     new google.maps.LatLng(35.685032, 13.902002),
+        //     new google.maps.LatLng(36.147092, 14.734407)
+        // ),
+        componentRestrictions: { country: "mt" },
         strictBounds: true
     })
 
@@ -84,6 +85,8 @@ function initMap() {
         infowindow.close();
         marker.setVisible(false);
         var place = autocomplete.getPlace();
+        var places = searchBox.getPlaces();
+        console.log(places)
         if (!place.geometry) {
             // User entered the name of a Place that was not suggested and
             // pressed the Enter key, or the Place Details request failed.
