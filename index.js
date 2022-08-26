@@ -86,7 +86,7 @@ function initMap() {
         infowindow.close();
         marker.setVisible(false);
         var place = autocomplete.getPlace();
-        var places = searchBox.getPlaces();
+        // var places = searchBox.getPlaces();
         // console.log(places)
         if (!place.geometry) {
             // User entered the name of a Place that was not suggested and
