@@ -41,7 +41,8 @@ function initMap() {
         mapTypeControl: false,
         panControl: false,
         streetViewControl: false,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
+        mapId: 'fddf6da0fd60a73c'
+        // mapTypeId: google.maps.MapTypeId.ROADMAP
     });
 
 
