@@ -87,7 +87,7 @@ function initMap() {
         marker.setVisible(false);
         var place = autocomplete.getPlace();
         var places = searchBox.getPlaces();
-        console.log(places)
+        // console.log(places)
         if (!place.geometry) {
             // User entered the name of a Place that was not suggested and
             // pressed the Enter key, or the Place Details request failed.
@@ -236,37 +236,35 @@ function initMap() {
                     var latLng = new google.maps.LatLng(parseFloat(busStop.Latitude), parseFloat(busStop.Longitude));
                     var marker = new google.maps.Marker({ position: latLng, map: map/*, label: busStop.name*/ });
 
-                    // console.log(busStop);
-
                     marker.addListener('click', function () {
                         var contentString = '<b>' + busStop.Name + '</b> (' + busStop.BusStopId + ')';
                         var contentStringLocal = contentString;
 
-                        // console.log("busStop...");
-                        // console.log(busStop);
-                        // console.log("...busStop");
-                        var stopTime = null;// comingBus(busStop);
-
+                        var uniqueRoutes = new Set();
                         busStop.Routes.forEach(route => {
-                            contentStringLocal += '<br>' + route.RouteNumber + " " + route.Description
+                            var routeDetails = route.RouteNumber + " " + route.Description;
+                            if(!uniqueRoutes.has(routeDetails)) {
+                                // Avoid repeated routes
+                                contentStringLocal += '<br>' + routeDetails;
+                                uniqueRoutes.add(routeDetails);
+                            }
                         });
 
                         infowindow.setContent(contentStringLocal);
                         infowindow.open(map, marker);
 
-                        comingBus(busStop).then(function (result) {
-                            // console.log("jndn")
-                            // console.log(result.Stops[0])
+                        comingBus(busStop).then(result => {
+                            contentString += coalesceBusRoutes(result.Stops[0].L);
+    
+                            // result.Stops[0].L.forEach(stop => {
 
-                            result.Stops[0].L.forEach(stop => {
+                            //     // console.log(stop)
+                            //     contentString += '<br>' + stop.N + " " + stop.D
+                            //     if (stop.RA) {
+                            //         contentString += ' : <b>' + stop.AT + ' mins </b>' //'<div align=\"right\"> ' + stop.AT + ' mins </div>'
+                            //     }
 
-                                // console.log(stop)
-                                contentString += '<br>' + stop.N + " " + stop.D
-                                if (stop.RA) {
-                                    contentString += ' : <b>' + stop.AT + ' mins </b>' //'<div align=\"right\"> ' + stop.AT + ' mins </div>'
-                                }
-
-                            });
+                            // });
 
                             infowindow.setContent(contentString);
                             // infowindow.open(map, marker);
@@ -288,7 +286,109 @@ function initMap() {
     }
 
     locations();
+
 }
+
+function coalesceBusRoutes(buses) {
+    function setValue(map, key, value) {
+        if (map.has(key)) { 
+            map.set(key,[...map.get(key), value]);
+        } else {
+            map.set(key,[value]);
+        }
+    }
+    
+    var busesWithArrivalTime = new Map();
+    var busesWithoutArrivalTime = new Set();
+
+    buses.forEach(bus => {
+        var N = bus.N;
+        var D = bus.D;
+        // var busRoute = N + " " + D;
+        if(bus.RA) {
+            if(busesWithArrivalTime.has(bus.N)) {
+                setValue(busesWithArrivalTime.get(bus.N), bus.D, bus.AT);
+            } else {
+                busesWithArrivalTime.set(bus.N, new Map([[bus.D, [bus.AT]]]));
+            }
+        } else if (!busesWithArrivalTime.has({N, D})) {
+            busesWithoutArrivalTime.add({N: N, D: D});
+        }
+    });
+
+    var collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
+
+    const busesWithArrivalTimeSorted = new Map([...busesWithArrivalTime].sort(collator.compare));
+
+    const busesWithoutArrivalTimeSorted = busesWithoutArrivalTime;
+    // todo fix sorting
+    // const busesWithoutArrivalTimeSorted = new Set([...busesWithoutArrivalTime].sort(collator.compare));
+
+    var unique = new Set();
+    var resultString = "";
+    busesWithArrivalTimeSorted.forEach((value, key) => {
+        value.forEach((innerValueTime, innerKeyRouteDescription) => {
+            resultString += '<br>' + key +  ' ' + innerKeyRouteDescription;
+            resultString += ' : <b>' + innerValueTime.join(", ") + ' mins </b>';
+            unique.add(key + ' ' + innerKeyRouteDescription);
+        });
+    });
+    busesWithoutArrivalTimeSorted.forEach( (k)  => {
+        if(!unique.has(k.N + ' ' + k.D)) {
+            resultString += '<br>' + k.N + " " + k.D;
+            unique.add(k.N + ' ' + k.D);
+        }
+    });
+
+    return resultString;
+}
+
+// function testCoalesceBusRoutes() {
+//     var test = coalesceBusRoutes([
+//         {
+//             "I": "3030002",
+//             "N": "903",
+//             "D": "Vapur - Victoria",
+//             "AT": "0",
+//             "O": null,
+//             "RA": false
+//         },
+//         {
+//             "I": "3030002",
+//             "N": "43",
+//             "D": "Vapur - Victoria",
+//             "AT": "0",
+//             "O": null,
+//             "RA": false
+//         },
+//         {
+//             "I": "3030002",
+//             "N": "303",
+//             "D": "Vapur - Victoria",
+//             "AT": "6",
+//             "O": null,
+//             "RA": true
+//         },
+//         {
+//             "I": "3030004",
+//             "N": "303",
+//             "D": "Vapur - Victoria",
+//             "AT": "12",
+//             "O": null,
+//             "RA": true
+//         },
+//         {
+//             "I": "3030012",
+//             "N": "303",
+//             "D": "Vapur - Victoria",
+//             "AT": "",
+//             "O": null,
+//             "RA": false
+//         }
+//     ]);
+//     console.log("test");
+//     console.log(test);
+// }
 
 function createCookie(name, value, days) {
     var expires;
